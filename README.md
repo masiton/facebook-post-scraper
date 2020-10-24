@@ -1,5 +1,5 @@
 # facebook-post-scraper
-Simple code that allows scraping Facebook Pages post data for education purposes. Use in a accordance with Facebook's ToS.
+Simple code that allows scraping Facebook Pages post data for education purposes. Use in accordance with Facebook's ToS.
 
 # Usage
 Run project Archivator.Facebook.Tester to scrape posts from some predefined Facebook Pages written in Examples.txt. The output looks as follows:
