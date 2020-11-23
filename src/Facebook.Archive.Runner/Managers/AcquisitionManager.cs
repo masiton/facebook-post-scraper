@@ -53,7 +53,7 @@ namespace Facebook.Archive.Runner.Managers
                 {
                     var postsUrl = this.facebookUrlHandler.GetPostsUrlForPage(target.Url);
                     var htmlDocument = await browser.GetHtmlDocument(postsUrl);
-                    var posts = this.facebookPagePostParser.GetFacebookPosts(htmlDocument);
+                    var posts = await this.facebookPagePostParser.GetFacebookPosts(htmlDocument, browser);
 
                     foreach (var post in posts)
                     {
@@ -88,6 +88,19 @@ namespace Facebook.Archive.Runner.Managers
 
                             scope.UnitOfWork.PostUpdates.Add(postUpdate);
                             scope.UnitOfWork.PostContents.Add(postContent);
+
+                            if (post.AttachmentData?.Length > 0)
+                            {
+                                var attachment = new PostAttachment
+                                {
+                                    Data = post.AttachmentData,
+                                    Type = scope.UnitOfWork.PostAttachmentTypes.AsTracking().Single(x => x.Name == PostAttachmentType.TYPE_IMAGE),
+                                    Description = post.AttachmentDescription,
+                                    Url = post.AttachmentLink
+                                };
+
+                                scope.UnitOfWork.PostAttachments.Add(attachment);
+                            }
 
                             dbUpdate.EndUtc = DateTime.UtcNow;
                             dbUpdate.IsSuccessful = true;

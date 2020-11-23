@@ -4,14 +4,16 @@ using Facebook.Archive.Data.Ef;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Facebook.Archive.Data.Migrations
 {
     [DbContext(typeof(FacebookDbContext))]
-    partial class FacebookContextModelSnapshot : ModelSnapshot
+    [Migration("20201122232425_UpdateAttachmentTable")]
+    partial class UpdateAttachmentTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,6 +65,7 @@ namespace Facebook.Archive.Data.Migrations
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("PostContentId")
@@ -71,16 +74,13 @@ namespace Facebook.Archive.Data.Migrations
                     b.Property<int?>("TypeId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Url")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PostContentId");
 
                     b.HasIndex("TypeId");
 
-                    b.ToTable("PostAttachments", "facebook");
+                    b.ToTable("PostAttachmentTypes", "facebook");
                 });
 
             modelBuilder.Entity("Facebook.Archive.Data.Model.PostAttachmentType", b =>
@@ -96,7 +96,7 @@ namespace Facebook.Archive.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PostAttachmentTypes", "facebook");
+                    b.ToTable("PostAttachments", "facebook");
                 });
 
             modelBuilder.Entity("Facebook.Archive.Data.Model.PostContent", b =>

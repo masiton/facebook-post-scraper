@@ -4,14 +4,16 @@ using Facebook.Archive.Data.Ef;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Facebook.Archive.Data.Migrations
 {
     [DbContext(typeof(FacebookDbContext))]
-    partial class FacebookContextModelSnapshot : ModelSnapshot
+    [Migration("20201122235432_SetupAttachmentTypes")]
+    partial class SetupAttachmentTypes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,6 +65,7 @@ namespace Facebook.Archive.Data.Migrations
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("PostContentId")
@@ -70,9 +73,6 @@ namespace Facebook.Archive.Data.Migrations
 
                     b.Property<int?>("TypeId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Url")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

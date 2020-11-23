@@ -16,6 +16,10 @@ namespace Facebook.Archive.Data.Persistence
 
         public PostContentRepository PostContents { get; set; }
 
+        public PostAttachmentRepository PostAttachments { get; set; }
+
+        public PostAttachmentTypeRepository PostAttachmentTypes { get; set; }
+
         private readonly FacebookDbContext context;
 
         public UnitOfWork(
@@ -24,7 +28,9 @@ namespace Facebook.Archive.Data.Persistence
             PostRepository posts,
             PostUpdateRepository postUpdates,
             PostContentRepository postContents,
-            UpdateRepository updates)
+            UpdateRepository updates,
+            PostAttachmentRepository postAttachments,
+            PostAttachmentTypeRepository postAttachmentTypes)
         {
             this.context = context;
             this.Pages = pages;
@@ -32,6 +38,8 @@ namespace Facebook.Archive.Data.Persistence
             this.PostUpdates = postUpdates;
             this.PostContents = postContents;
             this.Updates = updates;
+            this.PostAttachments = postAttachments;
+            this.PostAttachmentTypes = postAttachmentTypes;
         }
 
         public void SaveChanges()

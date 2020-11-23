@@ -1,23 +1,38 @@
-﻿using Facebook.Archive.Runner.Model.Facebook.Page;
+﻿using Facebook.Archive.Runner.Browser;
+using Facebook.Archive.Runner.Model.Facebook.Page;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Facebook.Archive.Runner.Parsers.Page
 {
     public class FacebookPagePostParser
     {
-        public List<Post> GetFacebookPosts(HtmlDocument document)
+        public async Task<List<Post>> GetFacebookPosts(HtmlDocument document, FacebookBrowser browser)
         {
+            var acceptAllButton = document.DocumentNode.SelectSingleNode(".//button[contains(@title, 'Accept All')]");
+
+            if(acceptAllButton != null)
+            {
+                await browser.ClickButton(acceptAllButton.XPath);
+            }
+
             var postElements = this.GetPostHtmlNodes(document);
-            var posts = postElements.Select(x => this.GetPostFromHtmlNode(x)).ToList();
+            var posts = new List<Post>();
+
+            foreach(var postElement in postElements)
+            {
+                posts.Add(await this.GetPostFromHtmlNode(postElement, browser));
+            }
 
             return posts;
         }
 
-        private Post GetPostFromHtmlNode(HtmlNode node)
+        private async Task<Post> GetPostFromHtmlNode(HtmlNode node, FacebookBrowser browser)
         {
             var nameParagraph = node.SelectSingleNode(".//h5");
             var dateHyperlink = nameParagraph.ParentNode.SelectSingleNode(".//div").SelectSingleNode(".//a");
@@ -25,18 +40,75 @@ namespace Facebook.Archive.Runner.Parsers.Page
             url = url.Substring(0, url.IndexOf('?'));
             var date = GetDateFromPostString(dateHyperlink.SelectSingleNode(".//span[contains(@class, 'timestampContent')]").ParentNode.Attributes["title"].Value);
 
-            var text = string.Empty;
+            string text = null;
 
-            if(node.SelectSingleNode(".//div[contains(@data-testid, 'post_message')]") != null)
+            byte[] attachment = null;
+            string attachmentTitle = null;
+            string link = null;
+
+            var postMessageNode = node.SelectSingleNode(".//div[contains(@data-testid, 'post_message')]");
+
+            if (postMessageNode != null)
             {
-                text = node.SelectSingleNode(".//div[contains(@data-testid, 'post_message')]").SelectSingleNode(".//p").InnerText;
+                text = postMessageNode.SelectSingleNode(".//p").InnerText;
+
+                var postMessageNodeIndex = postMessageNode.ParentNode.ChildNodes.IndexOf(postMessageNode);
+                
+                if (postMessageNode.ParentNode.ChildNodes.Count > postMessageNodeIndex + 1)
+                {
+                    var mediaContentCandidateNode = postMessageNode.ParentNode.ChildNodes[postMessageNodeIndex + 1];
+                    var imageContentCandidateNode = mediaContentCandidateNode.SelectSingleNode(".//img[contains(@class, 'scaledImageFitWidth img')]");
+
+                    if (imageContentCandidateNode?.Attributes.Contains("src") == true)
+                    {
+                        var mediaUrl = this.EscapeUrlSequence(imageContentCandidateNode.Attributes["src"].Value);
+
+                        using (var httpClient = new HttpClient())
+                        {
+                            attachment = await httpClient.GetByteArrayAsync(mediaUrl);
+                        }
+                    }
+
+                    var targetNode = mediaContentCandidateNode.SelectSingleNode(".//span");
+
+                    if (targetNode?.ChildNodes.Count > 1)
+                    {
+                        var aNode = targetNode.ChildNodes[1].SelectSingleNode(".//a[@aria-label]");
+                        if (aNode != null)
+                        {
+                            attachmentTitle = aNode.Attributes["aria-label"].Value;
+                            link = aNode.Attributes["href"].Value;
+                        }
+                    }
+                }
             }
-
-            var imageNode = node.SelectSingleNode(".//img");
-
-            if (imageNode != null)
+            else
             {
-                var imgSrc = imageNode.Attributes["src"].Value;
+                var contentCollectionNode = nameParagraph.ParentNode.ParentNode.ParentNode.ParentNode.ParentNode.ParentNode.ParentNode.ParentNode;
+                if(contentCollectionNode.ChildNodes.Count == 4)
+                {
+                    var mediaContentCandidateNode = contentCollectionNode.ChildNodes[2];
+                    var imageContentCandidateNode = mediaContentCandidateNode.SelectSingleNode(".//img[contains(@class, 'scaledImageFitWidth img')]");
+
+                    if (imageContentCandidateNode?.Attributes.Contains("src") == true)
+                    {
+                        var mediaUrl = this.EscapeUrlSequence(imageContentCandidateNode.Attributes["src"].Value);
+
+                        using (var httpClient = new HttpClient())
+                        {
+                            attachment = await httpClient.GetByteArrayAsync(mediaUrl);
+                        }
+                    }
+
+                    var targetNode = mediaContentCandidateNode.SelectSingleNode(".//span");
+
+                    if (targetNode?.ChildNodes.Count > 1)
+                    {
+                        var aNode = targetNode.ChildNodes[1].SelectSingleNode(".//a[@aria-label]");
+                        attachmentTitle = aNode.Attributes["aria-label"].Value;
+                        link = aNode.Attributes["href"].Value;
+                    }
+                }
             }
 
             return new Post
@@ -44,7 +116,10 @@ namespace Facebook.Archive.Runner.Parsers.Page
                 Html = node.InnerHtml,
                 Url = url,
                 Text = text,
-                TimestampUtc = date
+                TimestampUtc = date,
+                AttachmentData = attachment,
+                AttachmentDescription = attachmentTitle,
+                AttachmentLink = link
             };
         }
 
@@ -70,6 +145,11 @@ namespace Facebook.Archive.Runner.Parsers.Page
             var formatted = string.Join(null, values);
             var date = DateTime.ParseExact(formatted, "dddd, MMMM d, yyyy h:mm tt", CultureInfo.InvariantCulture);
             return date;
+        }
+
+        private string EscapeUrlSequence(string url)
+        {
+            return url.Replace("&amp;", "&").Replace("%3A", ":").Replace("%2F", "/");
         }
     }
 }

@@ -4,9 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Facebook.Archive.Data.Model
 {
-    [Table("PostAttachments", Schema = "facebook")]
+    [Table("PostAttachmentTypes", Schema = "facebook")]
     public class PostAttachmentType : ModelBase
     {
+        public const string TYPE_IMAGE = "IMAGE";
+
         [Required]
         public string Name { get; set; }
     }

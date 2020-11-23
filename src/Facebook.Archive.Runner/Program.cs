@@ -21,6 +21,8 @@ namespace Facebook.Archive.Runner
             .AddTransient<PostRepository>()
             .AddTransient<PostUpdateRepository>()
             .AddTransient<UpdateRepository>()
+            .AddTransient<PostAttachmentRepository>()
+            .AddTransient<PostAttachmentTypeRepository>()
             .AddTransient<UnitOfWork>()
             .AddTransient<UnitOfWorkScopeProvider>()
             .AddTransient<FacebookPagePostParser>()

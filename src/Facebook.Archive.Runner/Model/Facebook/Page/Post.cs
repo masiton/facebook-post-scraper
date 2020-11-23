@@ -13,5 +13,11 @@ namespace Facebook.Archive.Runner.Model.Facebook.Page
         public string Html { get; set; }
 
         public int Likes { get; set; }
+
+        public byte[] AttachmentData { get; set; }
+
+        public string AttachmentDescription { get; set; }
+
+        public string AttachmentLink { get; set; }
     }
 }

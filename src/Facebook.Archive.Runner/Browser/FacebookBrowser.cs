@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Interactions;
 using System;
 using System.Threading.Tasks;
 
@@ -42,6 +43,31 @@ namespace Facebook.Archive.Runner.Browser
             return document;
         }
 
+        public Task ClickButton(string xpath)
+        {
+            var element = this.current.FindElementByXPath(xpath);
+            var actions = new Actions(this.current);
+            actions.Click(element);
+            actions.Perform();
+            return Task.CompletedTask;
+        }
+
+        public Task ScrollToElement(string xpath)
+        {
+            var element = this.current.FindElementByXPath(xpath);
+            var actions = new Actions(this.current);
+            
+            actions.MoveToElement(element);
+            actions.Perform();
+
+            return Task.CompletedTask;
+        }
+
+        public Task NavigateToUrl(string url)
+        {
+            this.current.Url = url;
+            return Task.CompletedTask;
+        }
         public void Dispose()
         {
             this.current.Quit();
