@@ -22,9 +22,9 @@ namespace Facebook.Archive.Data.Model
 
         public List<PostContentText> Texts { get; set; }
 
-        public List<PostContentPhoto> Images { get; set; }
+        public List<PostContentImage> Images { get; set; }
 
-        public List<PostContentUrl> Links { get; set; }
+        public List<PostContentLink> Links { get; set; }
 
         public List<PostContentTimestamp> Timestamps { get; set; }
     }

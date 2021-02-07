@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Facebook.Archive.Data.Repositories
 {
-    public class PostContentUrlRepository : BaseRepository<PostContentUrl>
+    public class PostContentLinkRepository : BaseRepository<PostContentLink>
     {
-        public PostContentUrlRepository(FacebookDbContext context) : base(context)
+        public PostContentLinkRepository(FacebookDbContext context) : base(context)
         {
         }
 
-        protected override DbSet<PostContentUrl> GetDbSet()
+        protected override DbSet<PostContentLink> GetDbSet()
         {
             return dbContext.PostContentUrls;
         }

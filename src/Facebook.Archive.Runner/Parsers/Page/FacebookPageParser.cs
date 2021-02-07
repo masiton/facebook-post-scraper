@@ -1,6 +1,5 @@
-﻿using Facebook.Archive.Model.Page.Architecture.Base;
+﻿using Facebook.Archive.Model.Page;
 using Facebook.Archive.Parsers;
-using Facebook.Archive.Parsers.Parsers;
 using Facebook.Archive.Runner.Browser;
 using HtmlAgilityPack;
 using System.Collections.Generic;
@@ -9,20 +8,11 @@ using System.Threading.Tasks;
 
 namespace Facebook.Archive.Runner.Parsers.Page
 {
-    public class FacebookPagePostParser
+    public class FacebookPageParser
     {
-        private List<IParser<IPagePost>> parsers = new List<IParser<IPagePost>>
-        {
-            new PagePostWithUrlAndTextAndPhotoParser(),
-            new PagePostWithUrlAndTextParser(),
-            new PagePostWithUrlAndPhotoParser(),
-            new PagePostWithUrlParser(),
-            new PagePostWithPhotoAndTextParser(),
-            new PagePostWithTextParser(),
-            new PagePostWithPhotoParser(),
-        };
+        private FacebookPagePostParser pagePostParser = new FacebookPagePostParser();
 
-        public async Task<List<IPagePost>> GetFacebookPosts(HtmlDocument document, FacebookBrowser browser)
+        public async Task<List<Post>> GetFacebookPosts(HtmlDocument document, FacebookBrowser browser)
         {
             var acceptAllButton = document.DocumentNode.SelectSingleNode(".//button[contains(@title, 'Accept All')]");
 
@@ -32,27 +22,12 @@ namespace Facebook.Archive.Runner.Parsers.Page
             }
 
             var postElements = this.GetPostHtmlNodes(document);
-            var posts = new List<IPagePost>();
+            var posts = new List<Post>();
 
-            foreach(var postElement in postElements)
+            foreach (var postElement in postElements)
             {
-                foreach (var parser in this.parsers)
-                {
-                    try
-                    {
-                        var parsed = parser.Parse(postElement);
-
-                        if (parsed.GetQuality() >= 99)
-                        {
-                            posts.Add(parsed);
-                            break;
-                        }
-                    }
-                    catch
-                    {
-                        continue;
-                    }
-                }
+                var parsed = pagePostParser.Parse(postElement);
+                posts.Add(parsed);
             }
 
             return posts;

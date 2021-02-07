@@ -4,16 +4,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Facebook.Archive.Data.Model
 {
-    [Table("PostContentPhotos", Schema = "facebook")]
-    public class PostContentPhoto : ModelBase
+    [Table("PostContentLinks", Schema = "facebook")]
+    public class PostContentLink : ModelBase
     {
         [Required]
         public PostContent PostContent { get; set; }
 
         [Required]
-        public byte[] ImageData { get; set; }
+        public string Url { get; set; }
 
         [Required]
-        public string ImageUrl { get; set; }
+        public string UrlHtml { get; set; }
+
+        public string Text { get; set; }
     }
 }

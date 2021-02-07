@@ -15,9 +15,9 @@ namespace Facebook.Archive.Data.Ef
 
         public DbSet<PostUpdate> PostUpdates { get; set; }
 
-        public DbSet<PostContentPhoto> PostContentPhotos { get; set; }
+        public DbSet<PostContentImage> PostContentPhotos { get; set; }
 
-        public DbSet<PostContentUrl> PostContentUrls { get; set; }
+        public DbSet<PostContentLink> PostContentUrls { get; set; }
 
         public DbSet<PostContentText> PostContentTexts { get; set; }
 

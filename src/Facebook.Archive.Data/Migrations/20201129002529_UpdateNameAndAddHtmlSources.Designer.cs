@@ -4,14 +4,16 @@ using Facebook.Archive.Data.Ef;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Facebook.Archive.Data.Migrations
 {
     [DbContext(typeof(FacebookDbContext))]
-    partial class FacebookContextModelSnapshot : ModelSnapshot
+    [Migration("20201129002529_UpdateNameAndAddHtmlSources")]
+    partial class UpdateNameAndAddHtmlSources
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,7 +107,7 @@ namespace Facebook.Archive.Data.Migrations
 
                     b.HasIndex("PostContentId");
 
-                    b.ToTable("PostContentImages", "facebook");
+                    b.ToTable("PostContentPhotos", "facebook");
                 });
 
             modelBuilder.Entity("Facebook.Archive.Data.Model.PostContentLink", b =>
@@ -133,7 +135,7 @@ namespace Facebook.Archive.Data.Migrations
 
                     b.HasIndex("PostContentId");
 
-                    b.ToTable("PostContentLinks", "facebook");
+                    b.ToTable("PostContentUrls", "facebook");
                 });
 
             modelBuilder.Entity("Facebook.Archive.Data.Model.PostContentText", b =>

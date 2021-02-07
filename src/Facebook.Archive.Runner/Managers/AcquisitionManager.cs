@@ -1,6 +1,5 @@
 ﻿using Facebook.Archive.Data.Model;
 using Facebook.Archive.Data.Persistence;
-using Facebook.Archive.Model.Page.Architecture;
 using Facebook.Archive.Runner.Browser;
 using Facebook.Archive.Runner.Handlers;
 using Facebook.Archive.Runner.Parsers.Page;
@@ -16,13 +15,13 @@ namespace Facebook.Archive.Runner.Managers
         private readonly FacebookUrlHandler facebookUrlHandler;
         private readonly UnitOfWorkScopeProvider unitOfWorkScopeProvider;
         private readonly FacebookBrowserProvider facebookBrowserProvider;
-        private readonly FacebookPagePostParser facebookPagePostParser;
+        private readonly FacebookPageParser facebookPagePostParser;
 
         public AcquisitionManager(
             FacebookUrlHandler facebookUrlHandler,
             UnitOfWorkScopeProvider unitOfWorkScopeProvider,
             FacebookBrowserProvider facebookBrowserProvider,
-            FacebookPagePostParser facebookPagePostParser)
+            FacebookPageParser facebookPagePostParser)
         {
             this.facebookUrlHandler = facebookUrlHandler;
             this.unitOfWorkScopeProvider = unitOfWorkScopeProvider;
@@ -54,7 +53,17 @@ namespace Facebook.Archive.Runner.Managers
                 {
                     var postsUrl = this.facebookUrlHandler.GetPostsUrlForPage(target.Url);
                     var htmlDocument = await browser.GetHtmlDocument(postsUrl);
-                    var posts = await this.facebookPagePostParser.GetFacebookPosts(htmlDocument, browser);
+                    var posts = (List<Facebook.Archive.Model.Page.Post>)null;
+
+                    try
+                    {
+                        posts = await this.facebookPagePostParser.GetFacebookPosts(htmlDocument, browser);
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        continue;
+                    }
 
                     foreach (var post in posts)
                     {
@@ -85,7 +94,7 @@ namespace Facebook.Archive.Runner.Managers
                             {
                                 PostUpdate = dbPostUpdate,
                                 Html = post.Html,
-                                ParserName = post.Parser,
+                                ParserName = post.ParserName,
                                 ParserVersion = post.ParserVersion,
                             };
 
@@ -103,40 +112,36 @@ namespace Facebook.Archive.Runner.Managers
                                 scope.UnitOfWork.PostContentTimestamps.Add(dbPostContentTimestamp);
                             }
 
-                            if(post is IPageTextPost tp)
+                            if (post.Texts.Any() == true)
                             {
-                                var dbPostContentText = new PostContentText
+                                post.Texts.ForEach(x => scope.UnitOfWork.PostContentTexts.Add(new PostContentText
                                 {
-                                    Html = tp.Html,
-                                    Text = tp.Text,
-                                    PostContent = dbPostContent
-                                };
-
-                                scope.UnitOfWork.PostContentTexts.Add(dbPostContentText);
+                                    PostContent = dbPostContent,
+                                    Text = x.Text,
+                                    Html = x.TextHtml
+                                }));
                             }
 
-                            if(post is IPagePhotoPost pp)
+                            if(post.Images.Any() == true)
                             {
-                                var dbPostContentPhoto = new PostContentPhoto
+                                post.Images.ForEach(x => scope.UnitOfWork.PostContentImages.Add(new PostContentImage
                                 {
-                                    ImageData = pp.ImageData,
-                                    ImageUrl = pp.ImageUrl,
-                                    PostContent = dbPostContent
-                                };
-
-                                scope.UnitOfWork.PostContentPhotos.Add(dbPostContentPhoto);
+                                    PostContent = dbPostContent,
+                                    ImageData = x.ImageData,
+                                    ImageUrl = x.ImageUrl,
+                                    ImageUrlHtml = x.ImageUrlHtml
+                                }));
                             }
 
-                            if(post is IPageUrlPost up)
+                            if(post.Links.Any() == true)
                             {
-                                var dbPostContentUrl = new PostContentUrl
+                                post.Links.ForEach(x => scope.UnitOfWork.PostContentLinks.Add(new PostContentLink
                                 {
-                                    Text = up.LinkText,
-                                    Url = up.LinkUrl,
-                                    PostContent = dbPostContent
-                                };
-
-                                scope.UnitOfWork.PostContentUrls.Add(dbPostContentUrl);
+                                    PostContent = dbPostContent,
+                                    Text = x.LinkText,
+                                    Url = x.LinkUrl,
+                                    UrlHtml = x.LinkUrlHtml
+                                }));
                             }
 
                             scope.SaveChanges();

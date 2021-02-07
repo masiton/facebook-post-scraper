@@ -1,4 +1,4 @@
-﻿using Facebook.Archive.Model.Page.Architecture.Base;
+﻿using Facebook.Archive.Model.Base;
 using HtmlAgilityPack;
 
 namespace Facebook.Archive.Parsers
@@ -10,7 +10,7 @@ namespace Facebook.Archive.Parsers
         int ParserVersion { get; }
     }
 
-    public interface IParser<out T> : IParser where T : class, IElement
+    public interface IParser<out T> : IParser where T : FacebookElement
     {
         T Parse(HtmlNode node);
     }
