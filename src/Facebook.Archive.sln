@@ -5,7 +5,11 @@ VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Facebook.Archive.Data", "Facebook.Archive.Data\Facebook.Archive.Data.csproj", "{A3C8CFDC-9E7C-4DB6-9803-3A40A757D186}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Facebook.Archive.Runner", "Facebook.Archive.Runner\Facebook.Archive.Runner.csproj", "{762FF22B-D9EA-4113-95BA-67B8253F4FBF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Facebook.Archive.Runner", "Facebook.Archive.Runner\Facebook.Archive.Runner.csproj", "{762FF22B-D9EA-4113-95BA-67B8253F4FBF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Facebook.Archive.Parsers", "Facebook.Archive.Parsers\Facebook.Archive.Parsers.csproj", "{A2C797B8-D574-4386-9E28-CCD2F19D4CBF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Facebook.Archive.Model", "Facebook.Archive.Model\Facebook.Archive.Model.csproj", "{5C407949-C99A-4C68-BCA0-966C2D6A5316}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{762FF22B-D9EA-4113-95BA-67B8253F4FBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{762FF22B-D9EA-4113-95BA-67B8253F4FBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{762FF22B-D9EA-4113-95BA-67B8253F4FBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2C797B8-D574-4386-9E28-CCD2F19D4CBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2C797B8-D574-4386-9E28-CCD2F19D4CBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2C797B8-D574-4386-9E28-CCD2F19D4CBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2C797B8-D574-4386-9E28-CCD2F19D4CBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C407949-C99A-4C68-BCA0-966C2D6A5316}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C407949-C99A-4C68-BCA0-966C2D6A5316}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C407949-C99A-4C68-BCA0-966C2D6A5316}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C407949-C99A-4C68-BCA0-966C2D6A5316}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,14 +4,16 @@ using Facebook.Archive.Data.Ef;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Facebook.Archive.Data.Migrations
 {
     [DbContext(typeof(FacebookDbContext))]
-    partial class FacebookContextModelSnapshot : ModelSnapshot
+    [Migration("20201124191409_ChangePostContentStructure")]
+    partial class ChangePostContentStructure
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,12 +60,7 @@ namespace Facebook.Archive.Data.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<string>("Html")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ParserName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ParserVersion")
@@ -94,7 +91,7 @@ namespace Facebook.Archive.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PostContentId")
+                    b.Property<int?>("PostContentId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -112,14 +109,12 @@ namespace Facebook.Archive.Data.Migrations
                         .UseIdentityColumn();
 
                     b.Property<string>("Html")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PostContentId")
+                    b.Property<int?>("PostContentId")
                         .HasColumnType("int");
 
                     b.Property<string>("Text")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -129,30 +124,6 @@ namespace Facebook.Archive.Data.Migrations
                     b.ToTable("PostContentTexts", "facebook");
                 });
 
-            modelBuilder.Entity("Facebook.Archive.Data.Model.PostContentTimestamp", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int>("PostContentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TimestampRaw")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("TimestampUtc")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostContentId");
-
-                    b.ToTable("PostContentTimestamps", "facebook");
-                });
-
             modelBuilder.Entity("Facebook.Archive.Data.Model.PostContentUrl", b =>
                 {
                     b.Property<int>("Id")
@@ -160,15 +131,8 @@ namespace Facebook.Archive.Data.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int>("PostContentId")
+                    b.Property<int?>("PostContentId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -234,46 +198,23 @@ namespace Facebook.Archive.Data.Migrations
 
             modelBuilder.Entity("Facebook.Archive.Data.Model.PostContentPhoto", b =>
                 {
-                    b.HasOne("Facebook.Archive.Data.Model.PostContent", "PostContent")
+                    b.HasOne("Facebook.Archive.Data.Model.PostContent", null)
                         .WithMany("Images")
-                        .HasForeignKey("PostContentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PostContent");
+                        .HasForeignKey("PostContentId");
                 });
 
             modelBuilder.Entity("Facebook.Archive.Data.Model.PostContentText", b =>
                 {
-                    b.HasOne("Facebook.Archive.Data.Model.PostContent", "PostContent")
+                    b.HasOne("Facebook.Archive.Data.Model.PostContent", null)
                         .WithMany("Texts")
-                        .HasForeignKey("PostContentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PostContent");
-                });
-
-            modelBuilder.Entity("Facebook.Archive.Data.Model.PostContentTimestamp", b =>
-                {
-                    b.HasOne("Facebook.Archive.Data.Model.PostContent", "PostContent")
-                        .WithMany("Timestamps")
-                        .HasForeignKey("PostContentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PostContent");
+                        .HasForeignKey("PostContentId");
                 });
 
             modelBuilder.Entity("Facebook.Archive.Data.Model.PostContentUrl", b =>
                 {
-                    b.HasOne("Facebook.Archive.Data.Model.PostContent", "PostContent")
+                    b.HasOne("Facebook.Archive.Data.Model.PostContent", null)
                         .WithMany("Links")
-                        .HasForeignKey("PostContentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PostContent");
+                        .HasForeignKey("PostContentId");
                 });
 
             modelBuilder.Entity("Facebook.Archive.Data.Model.PostUpdate", b =>
@@ -298,8 +239,6 @@ namespace Facebook.Archive.Data.Migrations
                     b.Navigation("Links");
 
                     b.Navigation("Texts");
-
-                    b.Navigation("Timestamps");
                 });
 #pragma warning restore 612, 618
         }

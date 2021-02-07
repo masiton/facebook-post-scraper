@@ -11,11 +11,21 @@ namespace Facebook.Archive.Data.Model
         [Required]
         public PostUpdate PostUpdate { get; set; }
 
-        public string Text { get; set; }
+        [Required]
+        public string ParserName { get; set; }
 
         [Required]
-        public string RawHtml { get; set; }
+        public int ParserVersion { get; set; }
 
-        public List<PostAttachment> Attachments { get; set; }
+        [Required]
+        public string Html { get; set; }
+
+        public List<PostContentText> Texts { get; set; }
+
+        public List<PostContentPhoto> Images { get; set; }
+
+        public List<PostContentUrl> Links { get; set; }
+
+        public List<PostContentTimestamp> Timestamps { get; set; }
     }
 }

@@ -15,9 +15,13 @@ namespace Facebook.Archive.Data.Ef
 
         public DbSet<PostUpdate> PostUpdates { get; set; }
 
-        public DbSet<PostAttachment> PostAttachments { get; set; }
+        public DbSet<PostContentPhoto> PostContentPhotos { get; set; }
 
-        public DbSet<PostAttachmentType> PostAttachmentTypes { get; set; }
+        public DbSet<PostContentUrl> PostContentUrls { get; set; }
+
+        public DbSet<PostContentText> PostContentTexts { get; set; }
+
+        public DbSet<PostContentTimestamp> PostContentTimestamps { get; set; }
 
         public FacebookDbContext() : base()
         {

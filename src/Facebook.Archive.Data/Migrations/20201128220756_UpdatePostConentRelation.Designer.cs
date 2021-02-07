@@ -4,14 +4,16 @@ using Facebook.Archive.Data.Ef;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Facebook.Archive.Data.Migrations
 {
     [DbContext(typeof(FacebookDbContext))]
-    partial class FacebookContextModelSnapshot : ModelSnapshot
+    [Migration("20201128220756_UpdatePostConentRelation")]
+    partial class UpdatePostConentRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

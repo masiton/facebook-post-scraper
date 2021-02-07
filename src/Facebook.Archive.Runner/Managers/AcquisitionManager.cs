@@ -1,5 +1,6 @@
 ﻿using Facebook.Archive.Data.Model;
 using Facebook.Archive.Data.Persistence;
+using Facebook.Archive.Model.Page.Architecture;
 using Facebook.Archive.Runner.Browser;
 using Facebook.Archive.Runner.Handlers;
 using Facebook.Archive.Runner.Parsers.Page;
@@ -61,49 +62,82 @@ namespace Facebook.Archive.Runner.Managers
                         {
                             var dbPost = scope.UnitOfWork.Posts.AsTracking().SingleOrDefault(x => x.Url == post.Url);
 
-                            if(dbPost == null)
+                            if (dbPost == null)
                             {
                                 dbPost = new Post
-                                { 
-                                    Url = post.Url
+                                {
+                                    Url = post.Url,
                                 };
 
                                 scope.UnitOfWork.Posts.Add(dbPost);
-                                scope.SaveChanges();
                             }
 
-                            var postUpdate = new PostUpdate
+                            var dbPostUpdate = new PostUpdate
                             {
                                 Post = dbPost,
                                 Update = dbUpdate,
                                 Timestamp = DateTime.UtcNow
                             };
 
-                            var postContent = new PostContent
+                            scope.UnitOfWork.PostUpdates.Add(dbPostUpdate);
+
+                            var dbPostContent = new PostContent
                             {
-                                PostUpdate = postUpdate,
-                                RawHtml = post.Html,
-                                Text = post.Text
+                                PostUpdate = dbPostUpdate,
+                                Html = post.Html,
+                                ParserName = post.Parser,
+                                ParserVersion = post.ParserVersion,
                             };
 
-                            scope.UnitOfWork.PostUpdates.Add(postUpdate);
-                            scope.UnitOfWork.PostContents.Add(postContent);
+                            scope.UnitOfWork.PostContents.Add(dbPostContent);
 
-                            if (post.AttachmentData?.Length > 0)
+                            if(post.Timestamp.HasValue)
                             {
-                                var attachment = new PostAttachment
+                                var dbPostContentTimestamp = new PostContentTimestamp
                                 {
-                                    Data = post.AttachmentData,
-                                    Type = scope.UnitOfWork.PostAttachmentTypes.AsTracking().Single(x => x.Name == PostAttachmentType.TYPE_IMAGE),
-                                    Description = post.AttachmentDescription,
-                                    Url = post.AttachmentLink
+                                    TimestampUtc = post.Timestamp.Value,
+                                    TimestampRaw = post.TimestampRaw,
+                                    PostContent = dbPostContent
                                 };
 
-                                scope.UnitOfWork.PostAttachments.Add(attachment);
+                                scope.UnitOfWork.PostContentTimestamps.Add(dbPostContentTimestamp);
                             }
 
-                            dbUpdate.EndUtc = DateTime.UtcNow;
-                            dbUpdate.IsSuccessful = true;
+                            if(post is IPageTextPost tp)
+                            {
+                                var dbPostContentText = new PostContentText
+                                {
+                                    Html = tp.Html,
+                                    Text = tp.Text,
+                                    PostContent = dbPostContent
+                                };
+
+                                scope.UnitOfWork.PostContentTexts.Add(dbPostContentText);
+                            }
+
+                            if(post is IPagePhotoPost pp)
+                            {
+                                var dbPostContentPhoto = new PostContentPhoto
+                                {
+                                    ImageData = pp.ImageData,
+                                    ImageUrl = pp.ImageUrl,
+                                    PostContent = dbPostContent
+                                };
+
+                                scope.UnitOfWork.PostContentPhotos.Add(dbPostContentPhoto);
+                            }
+
+                            if(post is IPageUrlPost up)
+                            {
+                                var dbPostContentUrl = new PostContentUrl
+                                {
+                                    Text = up.LinkText,
+                                    Url = up.LinkUrl,
+                                    PostContent = dbPostContent
+                                };
+
+                                scope.UnitOfWork.PostContentUrls.Add(dbPostContentUrl);
+                            }
 
                             scope.SaveChanges();
                         }
