@@ -51,6 +51,8 @@ namespace Facebook.Archive.Runner.Managers
             {
                 foreach(var target in targets)
                 {
+                    Console.WriteLine(target.Url);
+
                     var postsUrl = this.facebookUrlHandler.GetPostsUrlForPage(target.Url);
                     var htmlDocument = await browser.GetHtmlDocument(postsUrl);
                     var posts = (List<Facebook.Archive.Model.Page.Post>)null;

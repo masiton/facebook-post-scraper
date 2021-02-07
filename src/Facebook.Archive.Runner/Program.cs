@@ -35,11 +35,7 @@ namespace Facebook.Archive.Runner
 
             var manager = serviceProvider.GetService<AcquisitionManager>();
 
-            while (true)
-            {
-                manager.Run().Wait();
-                Task.Delay(5000).Wait();
-            }
+            manager.Run().GetAwaiter().GetResult();
         }
     }
 }
