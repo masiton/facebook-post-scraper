@@ -31,7 +31,7 @@ namespace Facebook.Archive.Data.Ef
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer(@"Data Source=DESKTOP-JO6GOO1;Initial Catalog=FacebookDB;Integrated Security=True");
+            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=EFSample.Testing;Trusted_Connection=True;");
         }
     }
 }
